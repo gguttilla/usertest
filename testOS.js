@@ -35,51 +35,50 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var wdio = require("webdriverio");
+var OperatingSystem_1 = require("./../win-funkies/src/OperatingSystem");
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var opts, RootSession, FPWindow, FPWindowHandle, FPOpts, FPSession, FPWindow, allElems;
+        var ScriptPath, res, rawWindowData, splitData, windowData;
+        var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    opts = {
-                        port: 4723,
-                        capabilities: {
-                            platformName: "Windows",
-                            platformVersion: "10.0",
-                            deviceName: "WindowsPC",
-                            // appWorkingDir: "C:\\Program Files\\FlashPARCS",
-                            // app: "C:\\Program Files\\FlashPARCS\\FlashParcs.exe"
-                            app: "Root"
-                        }
-                    };
-                    return [4 /*yield*/, wdio.remote(opts)];
+                    ScriptPath = "C:\\Users\\giogu\\Documents\\Work\\FlashParking\\AutomationCommands\\WindowAutomation\\WindowAutomation\\bin\\x64\\Debug\\WindowAutomation.exe";
+                    return [4 /*yield*/, OperatingSystem_1.OperatingSystem.promiseFromExec(ScriptPath + ' GetRunningProcessHandle FlashPARCS')];
                 case 1:
-                    RootSession = _a.sent();
-                    return [4 /*yield*/, RootSession.$('~BaseForm')];
+                    res = _a.sent();
+                    console.log(res);
+                    return [4 /*yield*/, OperatingSystem_1.OperatingSystem.promiseFromExec(ScriptPath + ' GetWindowElements ' + res)];
                 case 2:
-                    FPWindow = _a.sent();
-                    return [4 /*yield*/, FPWindow.getAttribute("NativeWindowHandle")];
-                case 3:
-                    FPWindowHandle = _a.sent();
-                    FPOpts = {
-                        port: 4723,
-                        capabilities: {
-                            platformName: "Windows",
-                            platformVersion: "10.0",
-                            deviceName: "WindowsPC",
-                            appTopLevelWindow: parseInt(FPWindowHandle).toString(16)
+                    rawWindowData = _a.sent();
+                    console.log(rawWindowData);
+                    splitData = rawWindowData.split("\n");
+                    windowData = [];
+                    splitData.forEach(function (elem, i) {
+                        var id = elem.split(" ")[0];
+                        var text = elem.split(" ")[1];
+                        if (id != null && text != null) {
+                            windowData.push({
+                                id: id,
+                                text: text.replace("\r", "")
+                            });
                         }
-                    };
-                    return [4 /*yield*/, wdio.remote(FPOpts)];
-                case 4:
-                    FPSession = _a.sent();
-                    return [4 /*yield*/, FPSession.$('~BaseForm')];
-                case 5:
-                    FPWindow = _a.sent();
-                    return [4 /*yield*/, FPSession.findElements('xpath', '*')];
-                case 6:
-                    allElems = _a.sent();
+                    });
+                    console.log(windowData);
+                    windowData.forEach(function (elem) { return __awaiter(_this, void 0, void 0, function () {
+                        var cmd, _a, _b;
+                        return __generator(this, function (_c) {
+                            switch (_c.label) {
+                                case 0:
+                                    cmd = '"' + ScriptPath + '" ClickElement ' + res + ' ' + elem.id;
+                                    _b = (_a = console).log;
+                                    return [4 /*yield*/, OperatingSystem_1.OperatingSystem.promiseFromExec(cmd)];
+                                case 1:
+                                    _b.apply(_a, [_c.sent()]);
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); });
                     return [2 /*return*/];
             }
         });
